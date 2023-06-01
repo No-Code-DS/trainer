@@ -16,7 +16,7 @@ dependencies = [
 dynamic = ["version"]
 
 [tool.setuptools]
-packages = ["engine"]
+packages = ["trainer"]
 
 [tool.setuptools.dynamic]
 version = {file = "VERSION"}

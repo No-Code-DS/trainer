@@ -1,10 +1,10 @@
 import json
+import pickle
 
 import pandas as pd
 import pika
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
-import pickle
+from sklearn.model_selection import train_test_split
 
 connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq"))
 
