@@ -1,0 +1,42 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-push-ghcr:
+    name: Build and push to GHCR
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      IMAGE_NAME: trainer
+      REPO: no-code-ds
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker build -t $IMAGE_NAME:latest .
+      
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set version env variable
+        run: |
+          VER=$(cat VERSION)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+
+      - name: Push Docker Image to Container Registry (GCR)
+        run: |-
+          docker tag $IMAGE_NAME:latest ghcr.io/$REPO/$IMAGE_NAME:latest
+          docker tag $IMAGE_NAME:latest ghcr.io/$REPO/$IMAGE_NAME:${{ env.VERSION }}
+          docker push ghcr.io/$REPO/$IMAGE_NAME:latest
+          docker push ghcr.io/$REPO/$IMAGE_NAME:${{ env.VERSION }}
