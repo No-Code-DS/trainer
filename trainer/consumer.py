@@ -50,7 +50,6 @@ def callback(ch, method, properties, body):
         }
         print(evaluations)
 
-
         db_model = db.query(SelectedModel).get(config["model_id"])
         db_model.evaluation = json.dumps(evaluations)
         db_model.status = StatusEnum.TRAINED
