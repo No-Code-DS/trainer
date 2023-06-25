@@ -29,7 +29,6 @@ def prepare_data(file_path: str, prediction_field: str):
 def callback(ch, method, properties, body):
     print("consumed in trainer")
     config = json.loads(body)
-    print(config)
 
     X_train, X_test, y_train, y_test = prepare_data(config["file_path"], config["prediction_field"])
 
@@ -48,7 +47,6 @@ def callback(ch, method, properties, body):
             "mae": mean_absolute_error(y_test, y_pred),
             "mse": mean_squared_error(y_test, y_pred),
         }
-        print(evaluations)
 
         db_model = db.query(SelectedModel).get(config["model_id"])
         db_model.evaluation = json.dumps(evaluations)
@@ -56,7 +54,7 @@ def callback(ch, method, properties, body):
 
         db.commit()
 
-        with open(f"../trained_models/linear_regression_{config['model_id']}.pkl", "wb") as pkl:
+        with open(f"../trained_models/{config['name']}{config['model_id']}.pkl", "wb") as pkl:
             pickle.dump(model, pkl)
 
     elif config["name"] == "LogisticRegression":
